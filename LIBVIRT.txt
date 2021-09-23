@@ -1,0 +1,81 @@
+VALIDAR XML -> virt-xml-validate nombre.xml
+
+FUNCIONAMIENTO BÁSICO DE LIBVIRT
+
+USUARIO
+dpks -S 'which virsh' -> Ver donde esta el paquete virsh
+virsh -c qemu:///session list --all --> Listar todas las maquinas de la sesion
+virsh -c qemu:///system list --all --> Accede a la API como si fuera root
+
+ROOT
+dpkg -l | egrep qemu-kvm -> Ver paquetes kvm
+dpkg -l | egrep libvirt
+añadir usuario al grupo libvirt
+
+CREACIÓN DE REDES LIBVIRT
+
+redpordefecto.xml
+<network>
+ <name>default</name>
+ <forward mode='nat'>
+  <nat>
+   <port start='1024' end='65535'/>
+  </nat>
+ </forward>
+ <bridge name='virbr0' stp='on' delay='0'/>
+ <ip address='192.168.122.1' end='255.255.255.0'/>
+  <dhcp>
+    <range start='192.168.122.2' end='192.168.122.254' />
+  </dhcp>
+ </ip>
+<network>
+
+USUARIO
+virsh -c qemu:///system net-list (--all) -> Listar todas las redes
+virsh -c qemu:///system net-destroy nombre_red -> Elimina la red
+virsh -c qemu:///system net-create nombre_fichero.xml -> Crear Red NO PERSISTENTE
+virsh -c qemu:///system net-define nombre_fichero.xml -> Crear Red PERSISTENTE
+virsh -c qemu:///system net-start nombre_red -> Inicia la red
+virsh -c qemu:///system net-autostart nombre_red -> Iniciar red Automaticamente
+virsh -c qemu:///system net-info nombre_red -> Informe de Red
+virsh -c qemu:///system net-uuid nombre_red -> Muestra el uuid de la red
+virsh -c qemu:///system net-name uuid -> muestra el nombre de la red
+ROOT
+ip a s dev virbr0 -> Comprobar que se ha creado el bridge
+pns aux | egrp dnsmasq -> Ver procesos dnsmasq
+less /var/lib/libvirt/dnsmasq/default.conf -> Ver Fichero de Configuracion
+iptables -t nat -L nv -> Consultar reglas IPTABLE
+tree /etc/libvirt/qemu/networks/
+
+CREACION DEL POOL POR DEFECTO CON VIRSH
+
+poolpordefecto.xml
+
+<pool type='dir'>
+ <name>default</name>
+ <target>
+    <path>/var/lib/libvirt/images</path>
+ </target>
+</pool>
+
+USUARIO
+virsh -c qemu:///system pool-list (--all) -> Listar todos los pool
+virsh -c qemu:///system pool-define nombre_fichero.xml
+virsh -c qemu:///system pool-start nombre_pool
+virsh -c qemu:///system pool-dumpxml -> Muestra el XML formado e la API
+
+ROOT
+ls -d /var/lib/libvirt/images/ -> Ver el directorio
+
+SESION-POOL
+
+sessionpool.xml
+
+<pool type='dir'>
+ <name>default</name>
+ <target>
+    <path>/home/debian/.config/libvirt/images</path>
+ </target>
+</pool>
+
+virsh pool-define nombrefichero.xml
