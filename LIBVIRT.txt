@@ -49,23 +49,49 @@ tree /etc/libvirt/qemu/networks/
 
 CREACION DEL POOL POR DEFECTO CON VIRSH
 
+less default-pool.xml
 poolpordefecto.xml
 
 <pool type='dir'>
  <name>default</name>
  <target>
-    <path>/var/lib/libvirt/images</path>
+    <path>/var/lib/libvirt/images</path> //PODEMOS CAMBIAR LA RUTA
  </target>
 </pool>
 
-USUARIO
+ALMACENAMIENTO
 virsh -c qemu:///system pool-list (--all) -> Listar todos los pool
 virsh -c qemu:///system pool-define nombre_fichero.xml
 virsh -c qemu:///system pool-start nombre_pool
-virsh -c qemu:///system pool-dumpxml -> Muestra el XML formado e la API
+virsh -c qemu:///system pool-dumpxml -> Muestra el XML formado en la API
 
 ROOT
 ls -d /var/lib/libvirt/images/ -> Ver el directorio
+
+VOLUMENES
+<volume type='file'>
+  <name>vol1.img</name>
+  <key>/var/lib/libvirt/images/vol1.img</key>
+  <source>
+  </source>
+  <allocation>0</allocation>
+  <capacity unit="G">10</capacity>
+  <target>
+    <path>/var/lib/libvirt/images/vol1.img</path>
+    <format type='qcow2'/>
+  </target>
+</volume>
+
+virsh -c qemu:///system vol-create default vol.xml -> Crear un volumen
+virsh -c qemu:///system vol-list (--all) -> Listar todos los volumenes
+virsh -c qemu:///system vol-create as --format qcow2 --name "nombre" --capacity "capacidad" --pool default -> Crear un volumen por defecto
+virsh -c qemu:///system vol-upload "volumen_nuevo" "volumen_viejo" --pool default
+
+
+virsh -c qemu:///system edit "nombre_maquina"
+
+
+
 
 SESION-POOL
 
