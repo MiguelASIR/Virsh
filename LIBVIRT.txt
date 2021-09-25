@@ -87,11 +87,7 @@ virsh -c qemu:///system vol-list (--all) -> Listar todos los volumenes
 virsh -c qemu:///system vol-create as --format qcow2 --name "nombre" --capacity "capacidad" --pool default -> Crear un volumen por defecto
 virsh -c qemu:///system vol-upload "volumen_nuevo" "volumen_viejo" --pool default
 
-
 virsh -c qemu:///system edit "nombre_maquina"
-
-
-
 
 SESION-POOL
 
